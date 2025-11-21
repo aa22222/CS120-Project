@@ -1,0 +1,4 @@
+/Users/lukewu/Desktop/CS120 Project Final/build/CMakeFiles/trainer.dir
+/Users/lukewu/Desktop/CS120 Project Final/build/CMakeFiles/image_processor.dir
+/Users/lukewu/Desktop/CS120 Project Final/build/CMakeFiles/edit_cache.dir
+/Users/lukewu/Desktop/CS120 Project Final/build/CMakeFiles/rebuild_cache.dir
