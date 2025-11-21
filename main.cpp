@@ -60,6 +60,25 @@ double dot(vector<double>& a, vector<double> &b){
 bool query(vector<double> &x, vector<double>& norm, vector<double>& pos){
     return dot(x, norm) < dot(x, pos);
 }
+vector<cv::Mat> read_images(const string& directory_path){
+    if (!fs::exists(directory_path) || !fs::is_directory(directory_path)) {
+        std::cerr << "Error: Directory '" << directory_path << "' does not exist or is not a directory." << std::endl;
+        return vector<cv::Mat>();
+    }
+    
+    vector<cv::Mat> re;
+    int cnt = 0;
+    for (const auto& entry : fs::directory_iterator(directory_path)) {
+        cnt++;
+        if(cnt % 200 == 0) cout << cnt << endl;
+        if (fs::is_regular_file(entry.status())) {
+            string fname = entry.path().string();
+            cv::Mat image = cv::imread(fname, cv::IMREAD_GRAYSCALE);
+            re.push_back(image);
+        }
+    }
+    return re;
+}
 
 int main() {
     try {
@@ -83,6 +102,19 @@ int main() {
         cout << "The following images in " << dir << " are likely positive for tuberculosis: " << endl;
         for(int i = 0 ; i < X.size(); i++){
             if(query(X[i], norm, pos)) cout << fname[i] << endl;
+        }
+        
+        auto imgs = read_images("./test_filter");
+        cv::Mat kernel = (cv::Mat_<float>(3,3) << -1, -1, -1,
+                                         -1, 9, -1,
+                                          -1, -1, -1);
+
+        int ind = 0;
+        for(auto &image : imgs) {
+            cout << ind << endl;
+            cv::Mat sharpened_image;
+            cv::filter2D(image, sharpened_image, image.depth(), kernel);
+            cv::imwrite( "./filter_out/" + to_string(ind++) + ".png", sharpened_image);
         }
         
     } catch (const std::exception& e) {
